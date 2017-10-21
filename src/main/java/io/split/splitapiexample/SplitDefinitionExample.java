@@ -100,6 +100,33 @@ public class SplitDefinitionExample {
 
     }
 
+    private void killAndRestoreFromUpdate() throws IOException {
+        printName("Kill And Restore from update");
+        String splitName = "kill_res_update";
+        util.maybeCreateSplit(trafficTypeName, splitName);
+        util.maybeUnconfigureSplit(environmentName, splitName);
+        util.maybeConfigureSplit(environmentName, splitName);
+        SplitDefinitionExternal base = util.baseSplitDefinition();
+        SplitDefinitionExternal modified = SplitDefinitionExternal
+                .builder(base)
+                .killed(true)
+                .build();
+        JsonNode patch = JsonPatchUtil.createPatch(base, modified);
+        SplitDefinitionExternal updated = client
+                .splitDefinition()
+                .update(environmentName, splitName, patch);
+
+        modified = SplitDefinitionExternal
+                .builder(updated)
+                .killed(false)
+                .build();
+        patch = JsonPatchUtil.createPatch(updated, modified);
+        client
+                .splitDefinition()
+                .update(environmentName, splitName, patch);
+
+    }
+
     private void changeDefaultTreatment() throws IOException {
         printName("Changing Default Treatment");
         String splitName = "def_treatment";
@@ -124,8 +151,6 @@ public class SplitDefinitionExample {
         client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
-
-
     }
 
     private void addRemoveReplaceKey() throws IOException {
@@ -268,6 +293,7 @@ public class SplitDefinitionExample {
 
         example.configureGetListUnconfigure();
         example.killAndRestoreFromApiCommand();
+        example.killAndRestoreFromUpdate();
         example.changeTrafficAllocation();
         example.changeDefaultTreatment();
         example.addRemoveReplaceKey();

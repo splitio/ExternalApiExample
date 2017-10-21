@@ -1,13 +1,14 @@
 package io.split.splitapiexample;
 
 import io.split.splitapiexample.client.ApiClient;
+import io.split.splitapiexample.dtos.ResultExternal;
 import io.split.splitapiexample.dtos.SplitExternal;
 
 import java.util.Optional;
 
 public class SplitExample {
     private final static String API_URL = "https://api-aws-staging.split.io/internal/api";
-    private final static String ADMIN_API_TOKEN = "ADMIN_API_TOKEN";
+    private final static String ADMIN_API_TOKEN = "ADMI_API_TOKEN";
 
     /**
      * As an example, this will create one Split, get the Split, list the Splits of your organization and finally
@@ -22,13 +23,21 @@ public class SplitExample {
                 .name(splitName)
                 .build();
         System.out.println("--------------------------------------------");
-        System.out.println(client.externalSplit().create("user", splitExternal));
+        SplitExternal create = client.externalSplit().create("user", splitExternal);
+        System.out.println("RESULT: ");
+        System.out.println(create);
         System.out.println("--------------------------------------------");
-        System.out.println(client.externalSplit().get(splitName));
+        SplitExternal get = client.externalSplit().get(splitName);
+        System.out.println("RESULT: ");
+        System.out.println(get);
         System.out.println("--------------------------------------------");
-        System.out.println(client.externalSplit().list(Optional.empty(), Optional.empty()));
+        ResultExternal<SplitExternal> list = client.externalSplit().list(Optional.of(0), Optional.of(2));
+        System.out.println("RESULT: ");
+        System.out.println(list);
         System.out.println("--------------------------------------------");
-        System.out.println(client.externalSplit().delete(splitName));
+        Boolean delete = client.externalSplit().delete(splitName);
+        System.out.println("RESULT: ");
+        System.out.println(delete);
         System.out.println("--------------------------------------------");
     }
 }

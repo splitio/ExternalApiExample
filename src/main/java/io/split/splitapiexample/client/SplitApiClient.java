@@ -16,14 +16,19 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import java.util.List;
 
-public class ApiClient {
+public class SplitApiClient {
+    private final static String API_URL = "https://api.split.io/internal/api";
 
     private ExternalSplitEndpoint externalSplitEndpoint;
     private List<AbstractResourceEndpoint> resources;
     private ExternalSplitDefinitionEndpoint externalSplitDefinitionEndpoint;
 
 
-    public ApiClient(String url) {
+    public SplitApiClient() {
+        this(API_URL);
+    }
+
+    public SplitApiClient(String url) {
         Client client = client();
 
         client.property(ClientProperties.CONNECT_TIMEOUT, 60000);
@@ -51,7 +56,7 @@ public class ApiClient {
         return externalSplitDefinitionEndpoint;
     }
 
-    public ApiClient withAdminApiToken(String token) {
+    public SplitApiClient withAdminApiToken(String token) {
         resources.forEach(resourceEndpoint -> resourceEndpoint.withAdminApiToken(token));
         return this;
     }

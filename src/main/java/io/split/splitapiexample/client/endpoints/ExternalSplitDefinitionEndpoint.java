@@ -1,5 +1,6 @@
 package io.split.splitapiexample.client.endpoints;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -13,6 +14,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,8 +30,8 @@ public class ExternalSplitDefinitionEndpoint extends AbstractResourceEndpoint {
         checkNotNull(name);
         checkNotNull(environmentNameOrId);
         String target = String.format("%s/v1/splits/%s/environments/%s", baseURL(), name, environmentNameOrId);
-        System.out.println("Getting Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("GET " + target);
+        String message = "Getting Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "GET", target);
 
         return response(client().target(target)
                 .request()
@@ -43,10 +45,8 @@ public class ExternalSplitDefinitionEndpoint extends AbstractResourceEndpoint {
         checkNotNull(name);
         checkNotNull(environmentNameOrId);
         String target = String.format("%s/v1/splits/%s/environments/%s", baseURL(), name, environmentNameOrId);
-        System.out.println("Configuring Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("Payload: ");
-        System.out.println(new Gson().toJson(splitExternal));
-        System.out.println("POST " + target);
+        String message = "Configuring Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "POST", target, new Gson().toJson(splitExternal));
 
         return response(client().target(target)
                 .request()
@@ -58,8 +58,8 @@ public class ExternalSplitDefinitionEndpoint extends AbstractResourceEndpoint {
         checkNotNull(name);
         checkNotNull(environmentNameOrId);
         String target = String.format("%s/v1/splits/%s/environments/%s", baseURL(), name, environmentNameOrId);
-        System.out.println("Unconfiguring Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("DELETE " + target);
+        String message = "Unconfiguring Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "DELETE", target);
 
         return response(client().target(target)
                 .request()
@@ -75,8 +75,8 @@ public class ExternalSplitDefinitionEndpoint extends AbstractResourceEndpoint {
         String queryParams = (offset.isPresent() ? String.format("offset=%s", offset.get()) : "")
                 + (limit.isPresent() ? String.format("&limit=%s", limit.get()): "");
         String target = String.format("%s/v1/splits/environments/%s?%s", baseURL(), environmentNameOrId, queryParams);
-        System.out.println("Listing Split Definitions");
-        System.out.println("GET " + target);
+        String message = "Listing Split Definitions";
+        printMessage(message, "GET", target);
 
         return responseResultExternal(client().target(target)
                 .request()
@@ -86,46 +86,44 @@ public class ExternalSplitDefinitionEndpoint extends AbstractResourceEndpoint {
 
     public SplitDefinitionExternal update(String environmentNameOrId,
                                 String name,
-                                JsonPatch modify) {
+                                JsonNode modify) throws IOException {
         Preconditions.checkNotNull(environmentNameOrId);
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(modify);
 
         String target = String.format("%s/v1/splits/%s/environments/%s", baseURL(), name, environmentNameOrId);
-        System.out.println("Updating Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("Payload: ");
-        System.out.println(new Gson().toJson(modify));
-        System.out.println("PATCH " + target);
-
+        String message = "Updating Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "PATCH", target, modify.toString());
+        JsonPatch jsonPatch = JsonPatch.fromJson(modify);
         return response(client().target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())
-                .method("PATCH", Entity.json(modify)), SplitDefinitionExternal.class);
+                .method("PATCH", Entity.json(jsonPatch)), SplitDefinitionExternal.class);
     }
 
-    public boolean kill(String environmentNameOrId, String name) {
+    public void kill(String environmentNameOrId, String name) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(environmentNameOrId));
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name));
         List<String> emptyKeys = Lists.newArrayList();
         String target = String.format("%s/v1/splits/%s/environments/%s/kill", baseURL(), name, environmentNameOrId);
-        System.out.println("Killing Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("PUT " + target);
+        String message = "Killing Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "PUT", target);
         Response response = client()
                 .target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())
                 .put(Entity.entity(emptyKeys, MediaType.APPLICATION_JSON_TYPE));
-        return response(response, Boolean.class);
+        response(response, Boolean.class);
     }
 
-    public boolean restore(String environmentNameOrId, String name) {
+    public void restore(String environmentNameOrId, String name) {
         checkNotNull(environmentNameOrId);
         checkNotNull(name);
         String target = String.format("%s/v1/splits/%s/environments/%s/restore", baseURL(), name, environmentNameOrId);
-        System.out.println("Restoring Split Definition " + name + " on environment " + environmentNameOrId);
-        System.out.println("PUT " + target);
+        String message = "Restoring Split Definition " + name + " on environment " + environmentNameOrId;
+        printMessage(message, "PUT", target);
 
-        return response(client()
+        response(client()
                 .target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())

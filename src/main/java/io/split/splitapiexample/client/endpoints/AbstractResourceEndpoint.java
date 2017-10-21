@@ -66,7 +66,9 @@ public abstract class AbstractResourceEndpoint {
             long totalCount = e.get("totalCount").asLong();
             int offset = e.get("offset").asInt();
             int limit = e.get("limit").asInt();
-            return ResultExternal.builder(objectType).objects(successful).totalCount(totalCount).offset(offset).limit(limit).build();
+            ResultExternal result = ResultExternal.builder(objectType).objects(successful).totalCount(totalCount).offset(offset).limit(limit).build();
+            printResult(result);
+            return result;
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -74,9 +76,30 @@ public abstract class AbstractResourceEndpoint {
 
     protected <T> T response(Response response, Class<T> clazz) {
         if (response.getStatus() == 200) {
-            return response.readEntity(clazz);
+            T t = response.readEntity(clazz);
+            printResult(t);
+            return t;
         } else {
             throw new ResponseStatusError(response.readEntity(APIMessage.class));
         }
     }
+
+    private void printResult(Object result) {
+        System.out.println("RESULT: ");
+        System.out.println(result);
+    }
+    protected void printMessage(String message, String httpCall, String target) {
+        System.out.println("--------------------------------------------");
+        System.out.println(message);
+        System.out.println(httpCall + " " + target);
+    }
+
+    protected void printMessage(String message, String httpCall, String target, String payload) {
+        System.out.println("--------------------------------------------");
+        System.out.println(message);
+        System.out.println("Payload: ");
+        System.out.println(payload);
+        System.out.println(httpCall + " " + target);
+    }
+
 }

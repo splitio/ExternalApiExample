@@ -20,8 +20,8 @@ public class ExternalSplitEndpoint extends AbstractResourceEndpoint {
     public SplitExternal get(String name) {
         checkNotNull(name);
         String target = String.format("%s/v1/splits/%s", baseURL(), name);
-        System.out.println("Getting Split " + name);
-        System.out.println("GET " + target);
+        String message = "Getting Split " + name;
+        printMessage(message, "GET", target);
         return response(client().target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())
@@ -31,8 +31,8 @@ public class ExternalSplitEndpoint extends AbstractResourceEndpoint {
     public Boolean delete(String name) {
         checkNotNull(name);
         String target = String.format("%s/v1/splits/%s", baseURL(), name);
-        System.out.println("Deleting Split " + name);
-        System.out.println("DELETE " + target);
+        String message = "Deleting Split " + name;
+        printMessage(message, "DELETE", target);
         return response(client().target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())
@@ -43,10 +43,8 @@ public class ExternalSplitEndpoint extends AbstractResourceEndpoint {
         checkNotNull(splitExternal);
         checkNotNull(trafficTypeIdOrName);
         String target = String.format("%s/v1/splits/trafficTypes/%s", baseURL(), trafficTypeIdOrName);
-        System.out.println("Creating Split with Traffic " + trafficTypeIdOrName);
-        System.out.println("Payload: ");
-        System.out.println(new Gson().toJson(splitExternal));
-        System.out.println("POST " + target);
+        String message = "Creating Split with Traffic " + trafficTypeIdOrName;
+        printMessage(message, "POST", target, new Gson().toJson(splitExternal));
         return response(client().target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())
@@ -59,8 +57,8 @@ public class ExternalSplitEndpoint extends AbstractResourceEndpoint {
         String queryParams = (offset.isPresent() ? String.format("offset=%s", offset.get()) : "")
                 + (limit.isPresent() ? String.format("&limit=%s", limit.get()): "");
         String target = String.format("%s/v1/splits?" + queryParams, baseURL());
-        System.out.println("Listing Splits");
-        System.out.println("GET " + target);
+        String message = "Listing Splits";
+        printMessage(message, "GET", target);
         return responseResultExternal(client().target(target)
                 .request()
                 .header(HttpHeaders.AUTHORIZATION, credentials())

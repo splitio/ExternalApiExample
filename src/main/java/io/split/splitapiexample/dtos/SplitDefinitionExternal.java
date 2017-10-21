@@ -15,9 +15,7 @@ import java.util.List;
 public abstract class SplitDefinitionExternal {
 
     public static Builder builder() {
-        return new AutoValue_SplitDefinitionExternal.Builder()
-                // Default Values for the optional fields.
-                .trafficAllocation(100);
+        return new AutoValue_SplitDefinitionExternal.Builder();
     }
 
     public static Builder builder(SplitDefinitionExternal splitExternal) {

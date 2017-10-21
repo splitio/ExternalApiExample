@@ -23,19 +23,19 @@ public class SplitExample {
                 .name(splitName)
                 .build();
         System.out.println("--------------------------------------------");
-        SplitExternal create = client.externalSplit().create("user", splitExternal);
+        SplitExternal create = client.split().create("user", splitExternal);
         System.out.println("RESULT: ");
         System.out.println(create);
         System.out.println("--------------------------------------------");
-        SplitExternal get = client.externalSplit().get(splitName);
+        SplitExternal get = client.split().get(splitName);
         System.out.println("RESULT: ");
         System.out.println(get);
         System.out.println("--------------------------------------------");
-        ResultExternal<SplitExternal> list = client.externalSplit().list(Optional.of(0), Optional.of(2));
+        ResultExternal<SplitExternal> list = client.split().list(Optional.of(0), Optional.of(2));
         System.out.println("RESULT: ");
         System.out.println(list);
         System.out.println("--------------------------------------------");
-        Boolean delete = client.externalSplit().delete(splitName);
+        Boolean delete = client.split().delete(splitName);
         System.out.println("RESULT: ");
         System.out.println(delete);
         System.out.println("--------------------------------------------");

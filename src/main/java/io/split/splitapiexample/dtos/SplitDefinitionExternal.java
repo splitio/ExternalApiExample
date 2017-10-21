@@ -25,11 +25,11 @@ public abstract class SplitDefinitionExternal {
                 .name(splitExternal.name())
                 .environment(splitExternal.environment())
                 .defaultTreatment(splitExternal.defaultTreatment())
-//                .treatments(splitExternal.treatments())
+                .treatments(splitExternal.treatments())
                 .killed(splitExternal.killed())
-//                .defaultRule(splitExternal.defaultRule())
+                .defaultRule(splitExternal.defaultRule())
                 .trafficAllocation(splitExternal.trafficAllocation())
-//                .rules(splitExternal.rules())
+                .rules(splitExternal.rules())
                 .lastUpdateTime(splitExternal.lastUpdateTime())
                 .creationTime(splitExternal.creationTime());
     }
@@ -52,9 +52,9 @@ public abstract class SplitDefinitionExternal {
     @Nullable
     public abstract Boolean killed();
 
-//    @JsonProperty
-//    @Nullable
-//    public abstract List<TreatmentExternal> treatments();
+    @JsonProperty
+    @Nullable
+    public abstract List<TreatmentExternal> treatments();
 
     @JsonProperty
     @Nullable
@@ -64,13 +64,13 @@ public abstract class SplitDefinitionExternal {
     @Nullable
     public abstract Integer trafficAllocation();
 
-//    @JsonProperty
-//    @Nullable
-//    public abstract List<RuleExternal> rules();
-//
-//    @JsonProperty
-//    @Nullable
-//    public abstract List<BucketExternal> defaultRule();
+    @JsonProperty
+    @Nullable
+    public abstract List<RuleExternal> rules();
+
+    @JsonProperty
+    @Nullable
+    public abstract List<BucketExternal> defaultRule();
 
     @JsonProperty
     @Nullable
@@ -87,10 +87,10 @@ public abstract class SplitDefinitionExternal {
         public abstract Builder environment(URN environment);
         public abstract Builder killed(Boolean killed);
         public abstract Builder defaultTreatment(String defaultTreatment);
-//        public abstract Builder treatments(List<TreatmentExternal> treatments);
+        public abstract Builder treatments(List<TreatmentExternal> treatments);
         public abstract Builder trafficAllocation(Integer trafficAllocation);
-//        public abstract Builder rules(List<RuleExternal> rules);
-//        public abstract Builder defaultRule(List<BucketExternal> defaultRule);
+        public abstract Builder rules(List<RuleExternal> rules);
+        public abstract Builder defaultRule(List<BucketExternal> defaultRule);
         public abstract Builder lastUpdateTime(Long creationTime);
         public abstract Builder creationTime(Long creationTime);
         public abstract SplitDefinitionExternal build();

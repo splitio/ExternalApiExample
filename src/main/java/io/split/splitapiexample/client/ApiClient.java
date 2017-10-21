@@ -1,6 +1,8 @@
 package io.split.splitapiexample.client;
 
 import com.google.common.collect.Lists;
+import io.split.splitapiexample.client.endpoints.AbstractResourceEndpoint;
+import io.split.splitapiexample.client.endpoints.ExternalSplitDefinitionEndpoint;
 import io.split.splitapiexample.client.endpoints.ExternalSplitEndpoint;
 import io.split.splitapiexample.client.util.ObjectMapperProvider;
 import org.glassfish.jersey.client.ClientConfig;
@@ -14,13 +16,11 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import java.util.List;
 
-/**
- * Created on 10/20/17.
- */
 public class ApiClient {
 
     private ExternalSplitEndpoint externalSplitEndpoint;
-    private List<ExternalSplitEndpoint> resources;
+    private List<AbstractResourceEndpoint> resources;
+    private ExternalSplitDefinitionEndpoint externalSplitDefinitionEndpoint;
 
 
     public ApiClient(String url) {
@@ -36,12 +36,19 @@ public class ApiClient {
 
     private void initialize(Client jerseyClient, String baseURL) {
         this.externalSplitEndpoint = new ExternalSplitEndpoint(jerseyClient, baseURL);
-//        this.externalSplitResourceEndpoint= new ExternalSplitResourceEndpoint(jerseyClient, baseURL);
-        this.resources = Lists.newArrayList(externalSplitEndpoint);
+
+        this.externalSplitDefinitionEndpoint= new ExternalSplitDefinitionEndpoint(jerseyClient, baseURL);
+        this.resources = Lists.newArrayList(
+                externalSplitEndpoint,
+                externalSplitDefinitionEndpoint);
     }
 
-    public ExternalSplitEndpoint externalSplit() {
+    public ExternalSplitEndpoint split() {
         return externalSplitEndpoint;
+    }
+
+    public ExternalSplitDefinitionEndpoint splitDefinition() {
+        return externalSplitDefinitionEndpoint;
     }
 
     public ApiClient withAdminApiToken(String token) {

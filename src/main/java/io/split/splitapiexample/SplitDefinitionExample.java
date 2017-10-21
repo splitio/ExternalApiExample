@@ -238,18 +238,28 @@ public class SplitDefinitionExample {
         util.maybeCreateSplit(trafficTypeName, splitName);
         util.maybeUnconfigureSplit(environmentName, splitName);
         // Create a Split Definition with only one rule
-        util.maybeConfigureSplitWithRule(environmentName, splitName);
+        util.maybeConfigureSplit(environmentName, splitName);
 
-        // Add a second rule.
-        SplitDefinitionExternal base = util.baseSplitDefinitionWithRule();
-        List<RuleExternal> twoRules = util.simpleRule();
-        twoRules.addAll(util.simpleSetRule());
+        // Add first Rule
+        SplitDefinitionExternal base = util.baseSplitDefinition();
         SplitDefinitionExternal modified = SplitDefinitionExternal
                 .builder(base)
-                .rules(twoRules)
+                .rules(util.simpleRule())
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
         SplitDefinitionExternal updated = client
+                .splitDefinition()
+                .update(environmentName, splitName, patch);
+
+        // Add a second rule.
+        List<RuleExternal> twoRules = util.simpleRule();
+        twoRules.addAll(util.simpleSetRule());
+        modified = SplitDefinitionExternal
+                .builder(updated)
+                .rules(twoRules)
+                .build();
+        patch = JsonPatchUtil.createPatch(updated, modified);
+        updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 

@@ -259,8 +259,7 @@ public class SplitDefinitionExample {
 
 
     /**
-     * As an example, this will create one Split, get the Split, list the Splits of your organization and finally
-     * delete the Split
+     * Several Examples for the Split Definition API
      */
     public static void main(String[] args) throws Exception {
         SplitApiClient client = new SplitApiClient(API_URL);

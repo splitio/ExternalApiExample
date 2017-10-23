@@ -1,22 +1,11 @@
 package io.split.splitapiexample.client.util;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.google.common.base.Preconditions;
 
-/**
- * Created on 10/20/17.
- */
 public class Util {
+    public final static String API_URL = "https://api.split.io/internal/api";
 
-    public static URL getURLorElse(String url) {
-        try {
-            return new URL(stripBackslash(url));
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private static String stripBackslash(String url) {
+    public static String stripBackslash(String url) {
         return stripBackslash(url, false);
     }
 
@@ -28,5 +17,16 @@ public class Util {
             url = url.substring(1, url.length());
         }
         return url;
+    }
+
+    public static String maskToken(String adminToken) {
+        Preconditions.checkNotNull(adminToken);
+        int asteriskCount = adminToken.length() - 3;
+        StringBuilder builder = new StringBuilder();
+        builder.append(adminToken.substring(0, 3));
+        for(int count = 0; count < asteriskCount; count++) {
+            builder.append("*");
+        }
+        return builder.toString();
     }
 }

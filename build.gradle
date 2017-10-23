@@ -14,6 +14,26 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: "net.ltgt.apt"
 
+task runSplitExample(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "io.split.splitapiexample.SplitExample"
+  if (project.hasProperty("url")) {
+     args = [ "$adminToken", "$url" ]
+  } else {
+    args = [ "$adminToken" ]
+  }
+}
+
+task runSplitDefinitionExample(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "io.split.splitapiexample.SplitDefinitionExample"
+  if (project.hasProperty("url")) {
+     args = [ "$adminToken", "$url" ]
+  } else {
+    args = [ "$adminToken" ]
+  }
+}
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

@@ -5,17 +5,16 @@ import com.google.common.base.Preconditions;
 import io.split.splitapiexample.client.SplitApiClient;
 import io.split.splitapiexample.client.util.JsonPatchUtil;
 import io.split.splitapiexample.client.util.SplitDefinitionUtils;
+import io.split.splitapiexample.client.util.Util;
 import io.split.splitapiexample.dtos.RuleExternal;
 import io.split.splitapiexample.dtos.SplitDefinitionExternal;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class SplitDefinitionExample {
-    private final static String API_URL = "https://api-aws-staging.split.io/internal/api";
-    public final static String ADMIN_API_TOKEN = "ADMIN_API_TOKEN";
-
     private final String trafficTypeName;
     private final SplitApiClient client;
     private final String environmentName;
@@ -297,8 +296,22 @@ public class SplitDefinitionExample {
      * Several Examples for the Split Definition API
      */
     public static void main(String[] args) throws Exception {
-        SplitApiClient client = new SplitApiClient(API_URL);
-        client.withAdminApiToken(ADMIN_API_TOKEN);
+        List<String> argList = Arrays.asList(args);
+        if (argList.size() == 0 || argList.size() > 2) {
+            throw new IllegalArgumentException("Only Admin Token and URL allowd, got: " + argList);
+        }
+        String apiURL = argList.size() == 2 ? Util.stripBackslash(argList.get(1)) : Util.API_URL;
+        String adminToken = Util.stripBackslash(argList.get(0));
+
+
+        System.out.println("############################################");
+        System.out.println("API URL: " + apiURL);
+        System.out.println("Admin Token: " + Util.maskToken(adminToken));
+        System.out.println("############################################");
+
+
+        SplitApiClient client = new SplitApiClient(apiURL);
+        client.withAdminApiToken(adminToken);
         SplitDefinitionExample example = new SplitDefinitionExample(client);
 
         example.configureGetListUnconfigure();

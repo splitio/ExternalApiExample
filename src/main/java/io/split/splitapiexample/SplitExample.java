@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class SplitExample {
+    //Change these fields to create splits with other traffic type.
+    private static final String TRAFFIC_TYPE_NAME = "user";
 
     /**
      * As an example, this will create one Split, get the Split, list the Splits of your organization and finally
@@ -34,7 +36,7 @@ public class SplitExample {
                 .builder()
                 .name(splitName)
                 .build();
-        client.split().create("user", splitExternal);
+        client.split().create(TRAFFIC_TYPE_NAME, splitExternal);
         client.split().get(splitName);
         client.split().list(Optional.of(0), Optional.of(2));
         client.split().delete(splitName);

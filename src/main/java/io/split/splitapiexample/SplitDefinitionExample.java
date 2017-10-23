@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class SplitDefinitionExample {
+    //Change these fields to create splits with other traffic type or in other environment.
+    private static final String TRAFFIC_TYPE_NAME = "user";
+    private static final String ENVIRONMENT_NAME = "Staging";
+
     private final String trafficTypeName;
     private final SplitApiClient client;
     private final String environmentName;
@@ -22,8 +26,8 @@ public class SplitDefinitionExample {
 
     public SplitDefinitionExample(SplitApiClient client) {
         this.client = Preconditions.checkNotNull(client);
-        this.trafficTypeName = "user";
-        this.environmentName = "Staging";
+        this.trafficTypeName = TRAFFIC_TYPE_NAME;
+        this.environmentName = ENVIRONMENT_NAME;
         this.util = new SplitDefinitionUtils(client);
     }
 

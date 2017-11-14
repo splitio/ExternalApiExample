@@ -2,21 +2,21 @@ package io.split.splitapiexample.client.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import io.split.splitapiexample.client.SplitApiClient;
-import io.split.splitapiexample.dtos.BucketExternal;
-import io.split.splitapiexample.dtos.ConditionExternal;
-import io.split.splitapiexample.dtos.ConditionTypeExternal;
-import io.split.splitapiexample.dtos.MatcherExternal;
-import io.split.splitapiexample.dtos.RuleExternal;
-import io.split.splitapiexample.dtos.SplitDefinitionExternal;
-import io.split.splitapiexample.dtos.SplitExternal;
-import io.split.splitapiexample.dtos.TreatmentExternal;
+import io.split.api.SplitApiClient;
+import io.split.api.client.exceptions.SplitRequestException;
+import io.split.api.dtos.split.Bucket;
+import io.split.api.dtos.split.Condition;
+import io.split.api.dtos.split.ConditionType;
+import io.split.api.dtos.split.Matcher;
+import io.split.api.dtos.split.Rule;
+import io.split.api.dtos.split.Split;
+import io.split.api.dtos.split.SplitDefinition;
+import io.split.api.dtos.split.Treatment;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class SplitDefinitionUtils {
-
 
     private final SplitApiClient client;
 
@@ -29,79 +29,79 @@ public class SplitDefinitionUtils {
             client
                     .splitDefinition()
                     .unconfigure(environmentName, splitName);
-        } catch (ResponseStatusError e) {
-            System.out.println(e.message());
+        } catch (SplitRequestException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-
     public void maybeConfigureSplit(String environmentName, String splitName) {
-        SplitDefinitionExternal definitionExternal = baseSplitDefinition();
+        SplitDefinition  definitionExternal = baseSplitDefinition();
         try {
             client
                     .splitDefinition()
                     .configure(environmentName, splitName, definitionExternal);
-        } catch (ResponseStatusError e) {
-            Preconditions.checkArgument(e.message().contains("already exists"));
-            System.out.println(e.message());
+        } catch (SplitRequestException e) {
+            Preconditions.checkArgument(e.getMessage().contains("already exists"));
+            System.out.println(e.getMessage());
         }
     }
 
     public void maybeConfigureSplitWithRule(String environmentName, String splitName) {
-        SplitDefinitionExternal definitionExternal = baseSplitDefinitionWithRule();
+        SplitDefinition definitionExternal = baseSplitDefinitionWithRule();
         try {
             client
                     .splitDefinition()
                     .configure(environmentName, splitName, definitionExternal);
-        } catch (ResponseStatusError e) {
-            Preconditions.checkArgument(e.message().contains("already exists"));
-            System.out.println(e.message());
+        } catch (SplitRequestException e) {
+            Preconditions.checkArgument(e.getMessage().contains("already exists"));
+            System.out.println(e.getMessage());
         }
     }
 
-    public SplitDefinitionExternal baseSplitDefinition() {
+    public SplitDefinition baseSplitDefinition() {
         return baseSplitDefinition("on", "off");
     }
 
-    public SplitDefinitionExternal baseSplitDefinition(String firstTreatment, String secondTreatment) {
-        return SplitDefinitionExternal
+    public SplitDefinition baseSplitDefinition(String firstTreatment, String secondTreatment) {
+        return SplitDefinition
                 .builder()
                 .treatments(twoTreatments(firstTreatment, secondTreatment))
+                .rules(Lists.newArrayList())
                 .defaultTreatment(secondTreatment)
                 .defaultRule(defaultRule())
                 .build();
     }
 
-    public SplitDefinitionExternal baseSplitDefinitionWithRule() {
+    public SplitDefinition baseSplitDefinitionWithRule() {
         return baseSplitDefinitionWithRule("on", "off");
     }
 
-    public SplitDefinitionExternal baseSplitDefinitionWithRule(String firstTreatment, String secondTreatment) {
-        SplitDefinitionExternal base = baseSplitDefinition();
-        return SplitDefinitionExternal
+    public SplitDefinition baseSplitDefinitionWithRule(String firstTreatment, String secondTreatment) {
+        SplitDefinition base = baseSplitDefinition();
+        return SplitDefinition
                 .builder(base)
                 .rules(simpleRule(firstTreatment, secondTreatment))
                 .build();
     }
 
-    public List<RuleExternal> simpleRule() {
+    public List<Rule> simpleRule() {
         return simpleRule("on", "off");
     }
 
-    public List<RuleExternal> simpleSetRule() {
+    public List<Rule> simpleSetRule() {
         return simpleSetRule("on", "off");
     }
 
-    public List<RuleExternal> simpleSetRule(String firstTreatment, String secondTreatment) {
+    public List<Rule> simpleSetRule(String firstTreatment, String secondTreatment) {
         return Lists.newArrayList(
-                RuleExternal
+                Rule
                         .builder()
                         .buckets(twoBuckets(firstTreatment, 50, secondTreatment, 50))
-                        .condition(ConditionExternal
+                        .condition(Condition
                                 .builder()
-                                .matchers(Lists.newArrayList(MatcherExternal
+                                .matchers(Lists.newArrayList(Matcher
                                         .builder()
-                                        .type(ConditionTypeExternal.EQUAL_SET)
+                                        .type(ConditionType.EQUAL_SET)
                                         .strings(Lists.newArrayList("first", "second"))
                                         .attribute("theset")
                                         .build()))
@@ -110,16 +110,16 @@ public class SplitDefinitionUtils {
         );
     }
 
-    public List<RuleExternal> simpleRule(String firstTreatment, String secondTreatment) {
+    public List<Rule> simpleRule(String firstTreatment, String secondTreatment) {
         return Lists.newArrayList(
-                RuleExternal
+                Rule
                         .builder()
                         .buckets(twoBuckets(firstTreatment, 50, secondTreatment, 50))
-                        .condition(ConditionExternal
+                        .condition(Condition
                                         .builder()
-                                        .matchers(Lists.newArrayList(MatcherExternal
+                                        .matchers(Lists.newArrayList(Matcher
                                                     .builder()
-                                                    .type(ConditionTypeExternal.STARTS_WITH_STRING)
+                                                    .type(ConditionType.STARTS_WITH_STRING)
                                                     .strings(Lists.newArrayList("start"))
                                                     .build()))
                                         .build())
@@ -127,14 +127,14 @@ public class SplitDefinitionUtils {
         );
     }
 
-    public List<BucketExternal> twoBuckets(String firstName, int firstValue, String secondName, int secondValue) {
+    public List<Bucket> twoBuckets(String firstName, int firstValue, String secondName, int secondValue) {
         return Lists.newArrayList(
-                BucketExternal
+                Bucket
                     .builder()
                     .treatment(firstName)
                     .size(firstValue)
                     .build(),
-                BucketExternal
+                Bucket
                     .builder()
                     .treatment(secondName)
                     .size(secondValue)
@@ -142,53 +142,57 @@ public class SplitDefinitionUtils {
         );
     }
 
-    public List<TreatmentExternal> onOffTreatments(String... keysOn) {
+    public List<Treatment> onOffTreatments(String... keysOn) {
         return Lists.newArrayList(
-                TreatmentExternal
+                Treatment
                         .builder()
                         .name("on")
                         .keys(Arrays.asList(keysOn))
                         .build(),
-                TreatmentExternal
+                Treatment
                         .builder()
                         .name("off")
                         .build());
     }
 
-    public List<TreatmentExternal> twoTreatments(String first, String second) {
+    public List<Treatment> twoTreatments(String first, String second) {
         return Lists.newArrayList(
-                TreatmentExternal
+                Treatment
                         .builder()
                         .name(first)
+                        .keys(Lists.newArrayList())
+                        .segments(Lists.newArrayList())
                         .build(),
-                TreatmentExternal
+                Treatment
                         .builder()
                         .name(second)
+                        .keys(Lists.newArrayList())
+                        .segments(Lists.newArrayList())
                         .build());
     }
 
-    public List<TreatmentExternal> onOffTreatments() {
+    public List<Treatment> onOffTreatments() {
         return twoTreatments("on", "off");
     }
 
     public void maybeCreateSplit(String trafficTypeName, String name) {
-        SplitExternal splitExternal = SplitExternal
+        Split split = Split
                 .builder()
                 .name(Preconditions.checkNotNull(name))
                 .build();
         try {
             client
                     .split()
-                    .create(trafficTypeName, splitExternal);
-        } catch (ResponseStatusError e) {
-            Preconditions.checkArgument(e.message().contains("already exists"));
-            System.out.println(e.message());
+                    .create(split, trafficTypeName);
+        } catch (SplitRequestException e) {
+            Preconditions.checkArgument(e.getMessage().contains("already exists"));
+            System.out.println(e.getMessage());
         }
     }
 
-    public List<BucketExternal> defaultRule() {
+    public List<Bucket> defaultRule() {
         return Lists.newArrayList(
-                BucketExternal
+                Bucket
                         .builder()
                         .treatment("on")
                         .size(100)

@@ -2,17 +2,16 @@ package io.split.splitapiexample;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-import io.split.splitapiexample.client.SplitApiClient;
-import io.split.splitapiexample.client.util.JsonPatchUtil;
+import io.split.api.SplitApiClient;
+import io.split.api.dtos.split.Rule;
+import io.split.api.dtos.split.SplitDefinition;
+import io.split.api.util.JsonPatchUtil;
 import io.split.splitapiexample.client.util.SplitDefinitionUtils;
 import io.split.splitapiexample.client.util.Util;
-import io.split.splitapiexample.dtos.RuleExternal;
-import io.split.splitapiexample.dtos.SplitDefinitionExternal;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class SplitDefinitionExample {
     //Change these fields to create splits with other traffic type or in other environment.
@@ -68,7 +67,7 @@ public class SplitDefinitionExample {
 
         client
                 .split()
-                .list(Optional.of(0), Optional.of(2));
+                .list(0, 2);
 
         client
                 .splitDefinition()
@@ -82,17 +81,17 @@ public class SplitDefinitionExample {
         util.maybeUnconfigureSplit(environmentName, splitName);
         util.maybeConfigureSplit(environmentName, splitName);
 
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .trafficAllocation(100)
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
-        SplitDefinitionExternal updated = client
+        SplitDefinition updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .trafficAllocation(0)
                 .build();
@@ -109,17 +108,17 @@ public class SplitDefinitionExample {
         util.maybeCreateSplit(trafficTypeName, splitName);
         util.maybeUnconfigureSplit(environmentName, splitName);
         util.maybeConfigureSplit(environmentName, splitName);
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .killed(true)
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
-        SplitDefinitionExternal updated = client
+        SplitDefinition updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .killed(false)
                 .build();
@@ -136,17 +135,17 @@ public class SplitDefinitionExample {
         util.maybeCreateSplit(trafficTypeName, splitName);
         util.maybeUnconfigureSplit(environmentName, splitName);
         util.maybeConfigureSplit(environmentName, splitName);
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .defaultTreatment("on")
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
-        SplitDefinitionExternal updated = client
+        SplitDefinition updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .defaultTreatment("off")
                 .build();
@@ -164,18 +163,18 @@ public class SplitDefinitionExample {
         util.maybeConfigureSplit(environmentName, splitName);
 
         //Add one when there is no key at all
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .treatments(util.onOffTreatments("one"))
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
-        SplitDefinitionExternal updated = client
+        SplitDefinition updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 
         //Add one when there is one already
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .treatments(util.onOffTreatments("one", "two"))
                 .build();
@@ -185,7 +184,7 @@ public class SplitDefinitionExample {
                 .update(environmentName, splitName, patch);
 
         //Replace one
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .treatments(util.onOffTreatments("one", "replaced"))
                 .build();
@@ -195,7 +194,7 @@ public class SplitDefinitionExample {
                 .update(environmentName, splitName, patch);
 
         //Delete one when there is one left
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .treatments(util.onOffTreatments("one"))
                 .build();
@@ -205,7 +204,7 @@ public class SplitDefinitionExample {
                 .update(environmentName, splitName, patch);
 
         //Delete all
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .treatments(util.onOffTreatments())
                 .build();
@@ -222,8 +221,8 @@ public class SplitDefinitionExample {
         util.maybeUnconfigureSplit(environmentName, splitName);
         util.maybeConfigureSplitWithRule(environmentName, splitName);
 
-        SplitDefinitionExternal base = util.baseSplitDefinitionWithRule();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinitionWithRule();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .treatments(util.twoTreatments("on", "newValue"))
                 .defaultTreatment("newValue")
@@ -244,20 +243,20 @@ public class SplitDefinitionExample {
         util.maybeConfigureSplit(environmentName, splitName);
 
         // Add first Rule
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .rules(util.simpleRule())
                 .build();
         JsonNode patch = JsonPatchUtil.createPatch(base, modified);
-        SplitDefinitionExternal updated = client
+        SplitDefinition updated = client
                 .splitDefinition()
                 .update(environmentName, splitName, patch);
 
         // Add a second rule.
-        List<RuleExternal> twoRules = util.simpleRule();
+        List<Rule> twoRules = util.simpleRule();
         twoRules.addAll(util.simpleSetRule());
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .rules(twoRules)
                 .build();
@@ -267,7 +266,7 @@ public class SplitDefinitionExample {
                 .update(environmentName, splitName, patch);
 
         //Remove the rule
-        modified = SplitDefinitionExternal
+        modified = SplitDefinition
                 .builder(updated)
                 .rules(util.simpleRule())
                 .build();
@@ -284,8 +283,8 @@ public class SplitDefinitionExample {
         util.maybeUnconfigureSplit(environmentName, splitName);
         util.maybeConfigureSplit(environmentName, splitName);
 
-        SplitDefinitionExternal base = util.baseSplitDefinition();
-        SplitDefinitionExternal modified = SplitDefinitionExternal
+        SplitDefinition base = util.baseSplitDefinition();
+        SplitDefinition modified = SplitDefinition
                 .builder(base)
                 .defaultRule(util.twoBuckets("on", 20, "off", 80))
                 .build();
@@ -300,33 +299,17 @@ public class SplitDefinitionExample {
      * Several Examples for the Split Definition API
      */
     public static void main(String[] args) throws Exception {
-        List<String> argList = Arrays.asList(args);
-        if (argList.size() == 0 || argList.size() > 2) {
-            throw new IllegalArgumentException("Only Admin Token and URL allowd, got: " + argList);
-        }
-        String apiURL = argList.size() == 2 ? Util.stripBackslash(argList.get(1)) : Util.API_URL;
-        String adminToken = Util.stripBackslash(argList.get(0));
-
-
-        System.out.println("############################################");
-        System.out.println("API URL: " + apiURL);
-        System.out.println("Admin Token: " + Util.maskToken(adminToken));
-        System.out.println("############################################");
-
-
-        SplitApiClient client = new SplitApiClient(apiURL);
-        client.withAdminApiToken(adminToken);
+        SplitApiClient client = Util.getClient(Arrays.asList(args));
         SplitDefinitionExample example = new SplitDefinitionExample(client);
-
-        example.configureGetListUnconfigure();
-        example.killAndRestoreFromApiCommand();
-        example.killAndRestoreFromUpdate();
-        example.changeTrafficAllocation();
-        example.changeDefaultTreatment();
+//        example.configureGetListUnconfigure();
+//        example.killAndRestoreFromApiCommand();
+//        example.killAndRestoreFromUpdate();
+//        example.changeTrafficAllocation();
+//        example.changeDefaultTreatment();
         example.addRemoveReplaceKey();
-        example.renameTreatment();
-        example.addRemoveRule();
-        example.changeDefaultRule();
+//        example.renameTreatment();
+//        example.addRemoveRule();
+//        example.changeDefaultRule();
     }
 
     private void printName(String name) {

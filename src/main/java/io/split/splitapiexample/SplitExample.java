@@ -1,12 +1,10 @@
 package io.split.splitapiexample;
 
-import io.split.splitapiexample.client.SplitApiClient;
+import io.split.api.SplitApiClient;
+import io.split.api.dtos.split.Split;
 import io.split.splitapiexample.client.util.Util;
-import io.split.splitapiexample.dtos.SplitExternal;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 public class SplitExample {
     //Change these fields to create splits with other traffic type.
@@ -17,28 +15,26 @@ public class SplitExample {
      * delete the Split
      */
     public static void main(String[] args) throws Exception {
-        List<String> argList = Arrays.asList(args);
-        if (argList.size() == 0 || argList.size() > 2) {
-            throw new IllegalArgumentException("Only Admin Token and URL allowd, got: " + argList);
-        }
-        String apiURL = argList.size() == 2 ? Util.stripBackslash(argList.get(1)) : Util.API_URL;
-        String adminToken = argList.get(0);
-
-        System.out.println("############################################");
-        System.out.println("API URL: " + apiURL);
-        System.out.println("Admin Token: " + Util.maskToken(adminToken));
-        System.out.println("############################################");
-
-        SplitApiClient client = new SplitApiClient(apiURL);
-        client.withAdminApiToken(adminToken);
+        SplitApiClient client = Util.getClient(Arrays.asList(args));
         String splitName = "paywall_beta_2";
-        SplitExternal splitExternal = SplitExternal
+        Split split = Split
                 .builder()
                 .name(splitName)
                 .build();
-        client.split().create(TRAFFIC_TYPE_NAME, splitExternal);
-        client.split().get(splitName);
-        client.split().list(Optional.of(0), Optional.of(2));
-        client.split().delete(splitName);
+        client
+                .split()
+                .create(split, TRAFFIC_TYPE_NAME);
+
+        client
+                .split()
+                .get(splitName);
+
+        client
+                .split()
+                .list(0, 2);
+
+        client
+                .split()
+                .delete(splitName);
     }
 }
